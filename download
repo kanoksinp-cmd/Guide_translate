@@ -1,0 +1,21 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Logs
+*.log
+npm-debug.log*
+
+# Dependencies (not used by this static project, but ignored just in case
+# any tooling is added later)
+node_modules/
+package-lock.json
+
+# Build output (not used currently)
+dist/
+build/

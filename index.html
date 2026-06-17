@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Mail Desk — แปลงข้อความเป็นอีเมลอัจฉริยะ</title>
+<meta name="description" content="แปลงข้อความแบบร่างให้เป็นอีเมลที่เป็นทางการ พร้อมหน้าต่างแกะคำศัพท์ทีละคำ ทำงานทั้งหมดในเบราว์เซอร์ ไม่ต้องใช้ AI ภายนอก">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Taviraj:wght@500;600;700&family=Sarabun:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="desk">
+
+  <header class="desk__header">
+    <p class="eyebrow">Smart Mail Desk</p>
+    <h1>พิมพ์ดิบ → จดหมายฉบับสมบูรณ์</h1>
+    <p class="sub">
+      พิมพ์ข้อความตามสบาย แล้วให้ระบบจัดให้เป็นอีเมลที่เป็นทางการ
+      พร้อมหน้าต่างแกะคำศัพท์ทีละคำในรูปประโยค —
+      ทำงานด้วยตรรกะในตัวทั้งหมด ไม่ต้องเชื่อมต่อ AI ภายนอก จึงทำงานได้ทันทีหลังอัปโหลดขึ้น GitHub Pages
+    </p>
+  </header>
+
+  <!-- ============ COMPOSE ============ -->
+  <section class="compose-card paper">
+    <p class="card-label">ขั้นที่ 1 — ตั้งค่าและพิมพ์ร่าง</p>
+
+    <div class="controls">
+      <div class="control-group" id="modeGroup" role="radiogroup" aria-label="โหมดการแปลง">
+        <button class="pill active" data-mode="translate" type="button">แปล + จัดรูปแบบ</button>
+        <button class="pill" data-mode="tone" type="button">จัดรูปแบบอย่างเดียว (ไม่แปล)</button>
+      </div>
+      <div class="control-group direction-group" id="directionGroup" role="radiogroup" aria-label="ทิศทางการแปล">
+        <button class="pill small active" data-dir="th2en" type="button">ไทย → อังกฤษ</button>
+        <button class="pill small" data-dir="en2th" type="button">อังกฤษ → ไทย</button>
+      </div>
+    </div>
+
+    <div class="purposes" id="purposeGroup" role="radiogroup" aria-label="วัตถุประสงค์ของอีเมล"></div>
+
+    <div class="field-row">
+      <label>ผู้รับ
+        <input type="text" id="recipientInput" placeholder="เช่น คุณสมชาย / Mr. Somchai">
+      </label>
+      <label>ผู้ส่ง (ลงชื่อ)
+        <input type="text" id="senderInput" placeholder="ชื่อของคุณ">
+      </label>
+    </div>
+
+    <label class="field-subject">หัวข้ออีเมล (ไม่บังคับ)
+      <input type="text" id="subjectInput" placeholder="ปล่อยว่างไว้ เพื่อให้ระบบแนะนำหัวข้อให้อัตโนมัติ">
+    </label>
+
+    <label class="field-draft">
+      <span class="field-draft__label">ฉบับร่าง · Draft</span>
+      <textarea id="rawInput" rows="6">พี่ครับ พรุ่งนี้ส่งรายงานได้ไหมครับ เดี๋ยวผมรีบทำให้เลยครับ ขอบคุณครับ</textarea>
+    </label>
+    <p class="helper-text" id="modeHint"></p>
+
+    <button class="seal-btn" id="sealBtn" type="button">
+      <span class="seal-btn__icon">✉</span>
+      <span>ปิดผนึก &amp; สร้างอีเมล</span>
+    </button>
+  </section>
+
+  <!-- ============ RESULT ============ -->
+  <section class="result-card paper hidden" id="resultSection">
+    <p class="card-label">ขั้นที่ 2 — จดหมายฉบับสมบูรณ์</p>
+    <div class="letter-head">
+      <div><span>เรื่อง / Subject: </span><strong id="outSubject"></strong></div>
+    </div>
+    <div class="letter-body" id="outBody"></div>
+    <div class="result-actions">
+      <button id="copyBtn" type="button">📋 คัดลอกอีเมล</button>
+      <button id="openBreakdownBtn" type="button">🔍 ดูการแกะคำศัพท์</button>
+    </div>
+  </section>
+
+  <footer class="desk__footer">
+    <p>ทำงานในเบราว์เซอร์ของคุณทั้งหมด ไม่มีข้อมูลถูกส่งออกไปที่ใด · เป็นพจนานุกรม/ตรรกะภายในตัว ไม่ใช่ AI จริง</p>
+  </footer>
+
+</div>
+
+<!-- ============ WORD BREAKDOWN WINDOW ============ -->
+<div class="modal hidden" id="breakdownModal" aria-hidden="true">
+  <div class="modal__backdrop" data-close></div>
+  <div class="modal__window" role="dialog" aria-modal="true" aria-labelledby="breakdownTitle">
+    <div class="modal__flap"></div>
+    <header class="modal__header">
+      <h2 id="breakdownTitle">แกะคำศัพท์ในประโยค</h2>
+      <button class="modal__close" data-close type="button" aria-label="ปิดหน้าต่าง">×</button>
+    </header>
+    <div class="modal__body" id="breakdownContent"></div>
+  </div>
+</div>
+
+<script src="script.js" defer></script>
+</body>
+</html>
