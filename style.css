@@ -454,8 +454,7 @@ textarea:focus-visible { outline: 2px solid var(--seal-red); outline-offset: 1px
 }
 .gloss-word.particle .meaning { color: var(--muted); background: #f1eee2; font-style: italic; }
 .gloss-word.unknown .meaning { color: var(--muted); background: #f1eee2; }
-.gloss-word.passthru .orig { color: var(--muted); }
-.gloss-word.passthru .meaning { visibility: hidden; }
+.gloss-word.already .meaning { color: var(--muted); background: #f1eee2; font-style: italic; }
 
 /* track-change chips (tone-only mode) */
 .diff-list { display: flex; flex-direction: column; gap: 10px; }
